@@ -101,41 +101,71 @@ let input = `30
 
 // let input = document.querySelector('pre').innerText;
 
-let adaptorArray = input
-  .split('\n')
-  .map((x) => parseInt(x, 10))
-  .sort((a, b) => {
-    return a - b;
-  });
+let adaptorArray = input.split('\n').map((x) => parseInt(x, 10));
+adaptorArray.push(0);
+adaptorArray = adaptorArray.sort((a, b) => {
+  return a - b;
+});
+
+console.log(adaptorArray);
 
 let currentJoltage = 0;
-let oneJoltDiffs = 0;
-let twoJoltDiffs = 0;
-let threeJoltDiffs = 0;
 
-for (let i = 0; i < adaptorArray.length; i++) {
+let streak2 = 0;
+let streak3 = 0;
+let streak4 = 0;
+let streak5 = 0;
+let streak6 = 0;
+let streak7 = 0;
+
+let singleStepStreak = 0;
+let maxSingleStepStreak = 0;
+
+for (let i = 0; i < adaptorArray.length + 1; i++) {
   let joltageDifference = adaptorArray[i] - currentJoltage;
   currentJoltage = adaptorArray[i];
-  switch (joltageDifference) {
-    case 1:
-      oneJoltDiffs++;
-      break;
-    case 2:
-      break;
-    case 3:
-      threeJoltDiffs++;
-      break;
-    default:
-      break;
+  if (joltageDifference == 1) {
+    singleStepStreak++;
+    if (singleStepStreak > maxSingleStepStreak) {
+      maxSingleStepStreak = singleStepStreak;
+    }
+  } else if (joltageDifference == 3 || i == adaptorArray.length) {
+    switch (singleStepStreak) {
+      case 0:
+      case 1:
+        break;
+      case 2:
+        streak2++;
+        break;
+      case 3:
+        streak3++;
+        break;
+      case 4:
+        streak4++;
+        break;
+      case 5:
+        streak5++;
+        break;
+      case 6:
+        streak6++;
+        break;
+      case 7:
+        streak7++;
+        break;
+      default:
+        console.log('What the heck is going on!?!?');
+    }
+
+    console.log('singleStepStreak', singleStepStreak);
+
+    singleStepStreak = 0;
   }
+  console.log(adaptorArray[i]);
 }
 
-currentJoltage += 3;
-threeJoltDiffs += 1;
-let joltDiffsProduct = oneJoltDiffs * threeJoltDiffs;
+console.log('');
+console.log('streak2', streak2);
+console.log('streak3', streak3);
+console.log('streak4', streak4);
 
-console.log(`currentJoltage: ${currentJoltage}`);
-console.log(`oneJoltDiffs: ${oneJoltDiffs}`);
-console.log(`twoJoltDiffs: ${twoJoltDiffs}`);
-console.log(`threeJoltDiffs: ${threeJoltDiffs}`);
-console.log(`joltDiffsProduct: ${joltDiffsProduct}`);
+console.log(2 ** streak2 * 4 ** streak3 * 7 ** streak4);
