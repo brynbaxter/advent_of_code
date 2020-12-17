@@ -1,13 +1,10 @@
-// let input = `L.LL.LL.LL
-// LLLLLLL.LL
-// L.L.L..L..
-// LLLL.LL.LL
-// L.LL.LL.LL
-// L.LLLLL.LL
-// ..L.L.....
-// LLLLLLLLLL
-// L.LLLLLL.L
-// L.LLLLL.LL`;
+// let input = `.##.##.
+// #.#.#.#
+// ##...##
+// ...L...
+// ##...##
+// #.#.#.#
+// .##.##.`;
 
 // let input = document.querySelector('pre').innerText;
 
@@ -15,15 +12,29 @@ const fs = require('fs');
 const path = require('path');
 const input = fs.readFileSync(path.resolve(__dirname, '11_input.txt'), 'utf8');
 
-let model = input.split('\n').map((x) => {
-  return [...x];
-});
+let direcs = [
+  [-1, -1],
+  [-1, 0],
+  [-1, 1],
+  [0, -1],
+  [0, 1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
+];
+
+let model = input
+  .replace(/\r/g, '')
+  .split('\n')
+  .map((x) => {
+    return [...x];
+  });
 
 let getCurrentSeatStatus = (y, x) => {
   try {
     return model[y][x];
   } catch (error) {
-    return 'something';
+    return 'invalid';
   }
 };
 
@@ -32,37 +43,10 @@ let getNewSeatStatus = (y, x) => {
   if (model[y][x] == '.') {
     return '.';
   } else {
-    // check top-left
-    if (getCurrentSeatStatus(y - 1, x - 1) == '#') {
-      numAdjacentOccupiedSeats++;
-    }
-    // check top-center
-    if (getCurrentSeatStatus(y - 1, x) == '#') {
-      numAdjacentOccupiedSeats++;
-    }
-    // check top-right
-    if (getCurrentSeatStatus(y - 1, x + 1) == '#') {
-      numAdjacentOccupiedSeats++;
-    }
-    // check mid-left
-    if (getCurrentSeatStatus(y, x - 1) == '#') {
-      numAdjacentOccupiedSeats++;
-    }
-    // check mid-right
-    if (getCurrentSeatStatus(y, x + 1) == '#') {
-      numAdjacentOccupiedSeats++;
-    }
-    // check bottom-left
-    if (getCurrentSeatStatus(y + 1, x - 1) == '#') {
-      numAdjacentOccupiedSeats++;
-    }
-    // check bottom-centre
-    if (getCurrentSeatStatus(y + 1, x) == '#') {
-      numAdjacentOccupiedSeats++;
-    }
-    // check bottom-right
-    if (getCurrentSeatStatus(y + 1, x + 1) == '#') {
-      numAdjacentOccupiedSeats++;
+    for (let dir = 0; dir < direcs.length; dir++) {
+      if (getCurrentSeatStatus(y - direcs[dir][0], x - direcs[dir][1]) == '#') {
+        numAdjacentOccupiedSeats++;
+      }
     }
     if (numAdjacentOccupiedSeats == 0) {
       return '#';
