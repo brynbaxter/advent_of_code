@@ -18,38 +18,35 @@ let commands = input
   });
 
 let direction = 90;
+let wayX = 10;
+let wayY = 1;
 let x = 0;
 let y = 0;
 
 const moveStraight = (distance) => {
-  switch (direction) {
-    case 0:
-      y += distance;
-      break;
-    case 90:
-      x += distance;
-      break;
-    case 180:
-      y -= distance;
-      break;
-    case 270:
-      x -= distance;
-      break;
-    default:
-      console.log('moveForward error', distance);
-  }
+  x += wayX * distance;
+  y += wayY * distance;
 };
 
-const changeDirection = (turnDirection, angleChange) => {
-  switch (turnDirection) {
-    case 'L':
-      direction -= angleChange;
+const rotateDirection = (turnDirection, angleChange) => {
+  let angle;
+  if (turnDirection == 'R') {
+    angle = 360 - angleChange;
+  } else if (turnDirection == 'L') {
+    angle = angleChange;
+  }
+  switch (angle) {
+    case 90:
+      [wayX, wayY] = [-wayY, wayX];
       break;
-    case 'R':
-      direction += angleChange;
+    case 180:
+      [wayX, wayY] = [-wayX, -wayY];
+      break;
+    case 270:
+      [wayX, wayY] = [wayY, -wayX];
       break;
     default:
-      console.log('changeDirection error', angleChange);
+      console.log('rotateDirection error', turnDirection, angleChange);
   }
 
   while (direction >= 360) {
@@ -61,9 +58,26 @@ const changeDirection = (turnDirection, angleChange) => {
   }
 };
 
-commands.forEach((e) => console.log(e));
+const moveWaypoint = (action, value) => {
+  switch (action) {
+    case 'N':
+      wayY += value;
+      break;
+    case 'E':
+      wayX += value;
+      break;
+    case 'S':
+      wayY -= value;
+      break;
+    case 'W':
+      wayX -= value;
+      break;
+    default:
+      console.log('moveWayPoint error', action, value);
+  }
+};
 
-commands.forEach((command) => {
+const executeCommand = (command) => {
   action = command[0];
   value = command[1];
   switch (action) {
@@ -72,24 +86,22 @@ commands.forEach((command) => {
       break;
     case 'L':
     case 'R':
-      changeDirection(action, value);
+      rotateDirection(action, value);
       break;
     case 'N':
-      y += value;
-      break;
     case 'E':
-      x += value;
-      break;
     case 'S':
-      y -= value;
-      break;
     case 'W':
-      x -= value;
+      moveWaypoint(action, value);
       break;
     default:
       console.log('something went wrong');
   }
+};
+
+commands.forEach((command) => {
+  executeCommand(command);
 });
 
-console.log('x', x, 'y', y);
+console.log('Final position:', 'x', x, 'y', y);
 console.log('abs(x) + abs(y) =', Math.abs(x) + Math.abs(y));

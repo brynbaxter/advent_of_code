@@ -52,10 +52,10 @@ const changeDirection = (turnDirection, angleChange) => {
       console.log('changeDirection error', angleChange);
   }
 
+  // ensure angle always between 0 and 360
   while (direction >= 360) {
     direction -= 360;
   }
-
   while (direction < 0) {
     direction += 360;
   }
