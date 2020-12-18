@@ -1,10 +1,13 @@
-// let input = `.##.##.
-// #.#.#.#
-// ##...##
-// ...L...
-// ##...##
-// #.#.#.#
-// .##.##.`;
+// let input = `L.LL.LL.LL
+// LLLLLLL.LL
+// L.L.L..L..
+// LLLL.LL.LL
+// L.LL.LL.LL
+// L.LLLLL.LL
+// ..L.L.....
+// LLLLLLLLLL
+// L.LLLLLL.L
+// L.LLLLL.LL`;
 
 // let input = document.querySelector('pre').innerText;
 
@@ -23,6 +26,7 @@ let direcs = [
   [1, 1],
 ];
 
+// create model from input
 let model = input
   .replace(/\r/g, '')
   .split('\n')
@@ -30,11 +34,33 @@ let model = input
     return [...x];
   });
 
+// get character currently in seat. if beyond bounds, ignore error and return invalid
 let getCurrentSeatStatus = (y, x) => {
   try {
-    return model[y][x];
+    if (model[y][x] !== undefined) {
+      return model[y][x];
+    } else {
+      return 'beyond';
+    }
   } catch (error) {
-    return 'invalid';
+    return 'beyond';
+  }
+};
+
+let checkDirection = (y, x, direc) => {
+  for (let disp = 1; disp < model.length; disp++) {
+    let currentSeatStatus = getCurrentSeatStatus(
+      y + direc[0] * disp,
+      x + direc[1] * disp
+    );
+
+    if (currentSeatStatus == 'beyond') {
+      return false;
+    } else if (currentSeatStatus == 'L') {
+      return false;
+    } else if (currentSeatStatus == '#') {
+      return true;
+    }
   }
 };
 
@@ -44,13 +70,14 @@ let getNewSeatStatus = (y, x) => {
     return '.';
   } else {
     for (let dir = 0; dir < direcs.length; dir++) {
-      if (getCurrentSeatStatus(y - direcs[dir][0], x - direcs[dir][1]) == '#') {
+      let adjacentSeatOccupied = checkDirection(y, x, direcs[dir]);
+      if (adjacentSeatOccupied) {
         numAdjacentOccupiedSeats++;
       }
     }
     if (numAdjacentOccupiedSeats == 0) {
       return '#';
-    } else if (model[y][x] == '#' && numAdjacentOccupiedSeats >= 4) {
+    } else if (model[y][x] == '#' && numAdjacentOccupiedSeats >= 5) {
       return 'L';
     } else {
       return model[y][x];
@@ -58,6 +85,7 @@ let getNewSeatStatus = (y, x) => {
   }
 };
 
+// start 'game of life' until seating stabilises
 let matched = false;
 for (let a = 0; a < 100; a++) {
   let newModel = JSON.parse(JSON.stringify(model));
@@ -69,6 +97,7 @@ for (let a = 0; a < 100; a++) {
     }
   }
 
+  // if current seating same as new, stop 'game of life'
   if (JSON.stringify(model) == JSON.stringify(newModel)) {
     for (let y = 0; y < newModel.length; y++) {
       console.log(newModel[y].join(''));
@@ -80,6 +109,7 @@ for (let a = 0; a < 100; a++) {
   model = JSON.parse(JSON.stringify(newModel));
 }
 
+// tally occupied seats of final answer
 let occupiedSeats = 0;
 for (let y = 0; y < model.length; y++) {
   for (let x = 0; x < model[y].length; x++) {

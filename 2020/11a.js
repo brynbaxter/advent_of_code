@@ -1,16 +1,19 @@
-// let input = `.##.##.
-// #.#.#.#
-// ##...##
-// ...L...
-// ##...##
-// #.#.#.#
-// .##.##.`;
+let input = `L.LL.LL.LL
+LLLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLLL
+L.LLLLLL.L
+L.LLLLL.LL`;
 
 // let input = document.querySelector('pre').innerText;
 
-const fs = require('fs');
-const path = require('path');
-const input = fs.readFileSync(path.resolve(__dirname, '11_input.txt'), 'utf8');
+// const fs = require('fs');
+// const path = require('path');
+// const input = fs.readFileSync(path.resolve(__dirname, '11_input.txt'), 'utf8');
 
 let direcs = [
   [-1, -1],
