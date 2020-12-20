@@ -24,9 +24,11 @@ console.log(newStartTime);
 const getCommonTime = (i) => {
   while (true) {
     console.log((newStartTime + i) / busArr[i]);
-    if ((newStartTime + i) % busArr[i] == 0) {
+    if (
+      (newStartTime + i) / busArr[i] ==
+      Math.floor((newStartTime + i) / busArr[i])
+    ) {
       lastConfirmedTime = newStartTime;
-      console.log('lastConfirmedTime', lastConfirmedTime);
       break;
     } else {
       newStartTime += lastConfirmedTime;
@@ -40,5 +42,3 @@ for (let i = 1; i < busArr.length; i++) {
     getCommonTime(i);
   }
 }
-
-console.log(lastConfirmedTime);
