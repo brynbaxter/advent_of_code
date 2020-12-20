@@ -1,10 +1,11 @@
-// let input = `1789,37,47,1889`;
+let input = `939
+17,x,13,19`;
 
 // let input = document.querySelector('pre').innerText;
 
-const fs = require('fs');
-const path = require('path');
-const input = fs.readFileSync(path.resolve(__dirname, '13_input.txt'), 'utf8');
+// const fs = require('fs');
+// const path = require('path');
+// const input = fs.readFileSync(path.resolve(__dirname, '13_input.txt'), 'utf8');
 
 let notes = input.replace(/\r/g, '').split('\n');
 
@@ -16,39 +17,28 @@ let busArr = notes[1].split(',').map((item) => {
   }
 });
 
-const busLeavesAtThisTime = (bus, desiredTime) => {
-  if (bus == 'x') {
-    return true;
-  } else if (desiredTime / bus == Math.floor(desiredTime / bus)) {
-    return true;
-  } else {
-    return false;
-  }
-};
+let newStartTime = busArr[0];
+let lastConfirmedTime = busArr[0];
+console.log(newStartTime);
 
-const checkFleet = (firstBusDeparture) => {
-  for (let bus = 1; bus < busArr.length; bus++) {
-    let desiredTime = firstBusDeparture + bus;
-    let matched = busLeavesAtThisTime(busArr[bus], desiredTime);
-    if (!matched) {
-      return false;
+const getCommonTime = (i) => {
+  while (true) {
+    console.log((newStartTime + i) / busArr[i]);
+    if (
+      (newStartTime + i) / busArr[i] ==
+      Math.floor((newStartTime + i) / busArr[i])
+    ) {
+      lastConfirmedTime = newStartTime;
+      break;
+    } else {
+      newStartTime += lastConfirmedTime;
     }
   }
-  console.log(firstBusDeparture);
-  return true;
 };
 
-// loops i = 7, 14, 21, 28, ...
-// iterate through each time the first bus leaves depot
-let fleetPassed = false;
-let cycle = 1;
-while (!fleetPassed) {
-  let firstBusDeparture = busArr[0] * cycle;
-  console.log(firstBusDeparture);
-  let fleetPassed = checkFleet(firstBusDeparture);
-  if (fleetPassed) {
-    break;
-  } else {
-    cycle++;
+for (let i = 1; i < busArr.length; i++) {
+  console.log(busArr[i]);
+  if (busArr[i] !== 'x') {
+    getCommonTime(i);
   }
 }
