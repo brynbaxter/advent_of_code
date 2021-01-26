@@ -1,6 +1,6 @@
-let input = `mask = 00X1001X
+let input = `mask = 000000000000000000000000000000X1001X
 mem[42] = 100
-mask = 0000X0XX
+mask = 00000000000000000000000000000000X0XX
 mem[26] = 1`;
 
 // let input = document.querySelector('pre').innerText;
@@ -12,8 +12,8 @@ mem[26] = 1`;
 let commands = input
   .replace(/\r/g, '')
   .split('\n')
-  .map((x) => {
-    return x.split(' = ');
+  .map(x => {
+    return x.split(/ = |\[|\]/);
   });
 
 const applyBitmaskV1 = (integer, bitmask) => {
@@ -36,7 +36,7 @@ const applyBitmaskV1 = (integer, bitmask) => {
   return newInteger;
 };
 
-const sumMemory = (memory) => {
+const sumMemory = memory => {
   initialValue = 0;
   let sum = memory.reduce(
     (totalValue, currentValue) => totalValue + currentValue,
@@ -48,12 +48,12 @@ const sumMemory = (memory) => {
 const partOne = () => {
   let memory = [];
   let bitmask = '';
-  commands.forEach((x) => {
-    if (x[0] == 'mask') {
-      bitmask = x[1];
+  commands.forEach(commands => {
+    if (commands[0] == 'mask') {
+      bitmask = commands[1];
     } else {
-      let memPosition = x[0].slice(4, -1);
-      let newValue = applyBitmaskV1(x[1], bitmask);
+      let memPosition = commands[1];
+      let newValue = applyBitmaskV1(commands[3], bitmask);
       memory[memPosition] = newValue;
     }
   });
@@ -61,35 +61,64 @@ const partOne = () => {
   return sum;
 };
 
-const getMappedFloatingBits = (bitmask) => {
-  let answerArr = [];
-  console.log(bitmask);
-  let countX = bitmask.split('X').length - 1;
-  for (let i = 0; i < countX; i++) {
-    let bitString = i.toString(2);
-    while (bitString.length < countX.toString(2).length) {
-      bitString = '0' + bitString;
-    }
-    let bitArray = Array.from(bitString);
-    console.log(countX, bitString);
+// const getMappedFloatingBits = bitmask => {
+//   let answerArr = [];
+//   let countX = bitmask.split('X').length - 1;
+//   for (let i = 0; i < countX; i++) {
+//     let bitString = i.toString(2);
+//     while (bitString.length < countX.toString(2).length) {
+//       bitString = '0' + bitString;
+//     }
+//     let bitArray = Array.from(bitString);
+//   }
+// };
+
+const intToBinary = (integer, mapLength) => {
+  let bitString = Number(integer).toString(2);
+  while (bitString.length < mapLength) {
+    bitString = '0' + bitString;
   }
+  return bitString;
+};
+
+const applyBitmaskV2 = (bitString, bitmask) => {
+  let bitArr = bitString.split('');
+  let maskArr = bitmask.split('');
+  let mappedArr = bitArr.map((bit, index) => {
+    if (maskArr[index] === 'X') {
+      return 'X';
+    } else if (maskArr[index] === '1') {
+      return '1';
+    } else {
+      return bit;
+    }
+  });
+  let mappedString = mappedArr.join('');
+  return mappedString;
+};
+
+const evaluateMappedString = mappedString => {
+  console.log('eval', mappedString);
 };
 
 const partTwo = () => {
-  let memory = [];
-  let bitmask = '';
-  commands.forEach((command) => {
+  commands.forEach(command => {
     if (command[0] == 'mask') {
       bitmask = command[1];
     } else {
-      let memPosition = command[0].slice(4, -1);
-      let mappedFloatingBits = getMappedFloatingBits(bitmask);
+      let position = command[1];
+      let bitString = intToBinary(position, bitmask.length);
+      let mappedString = applyBitmaskV2(bitString, bitmask);
+      evaluateMappedString(mappedString);
     }
+    console.log('');
   });
   let sum = sumMemory(memory);
   return sum;
 };
 
-console.log('part one', partOne());
+// console.log('part one', partOne());
 
+let memory = [];
+let bitmask = '';
 console.log('part two', partTwo());
