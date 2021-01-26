@@ -99,6 +99,15 @@ const applyBitmaskV2 = (bitString, bitmask) => {
 
 const evaluateMappedString = mappedString => {
   console.log('eval', mappedString);
+  let answerArr = [];
+  let countX = bitmask.split('X').length - 1;
+
+  for (let i = 0; i < 2 ** countX; i++) {
+    let bitString = intToBinary(i, bitmask.length);
+    let bitArray = Array.from(bitString);
+    bitString = bitArray.join('');
+    console.log(countX, bitString);
+  }
 };
 
 const partTwo = () => {
@@ -109,7 +118,7 @@ const partTwo = () => {
       let position = command[1];
       let bitString = intToBinary(position, bitmask.length);
       let mappedString = applyBitmaskV2(bitString, bitmask);
-      evaluateMappedString(mappedString);
+      let answerArray = evaluateMappedString(mappedString);
     }
     console.log('');
   });
