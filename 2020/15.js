@@ -1,5 +1,6 @@
 let sequence = [0, 13, 1, 8, 6, 15];
 let length = sequence.length;
+let last = sequence[sequence.length - 1];
 
 const getPrevPosition = (sequence, last) => {
   let strippedSequence = sequence.slice(0, -1);
