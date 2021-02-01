@@ -18,7 +18,7 @@ const puzzleInput = fs.readFileSync(
   'utf8'
 );
 
-const testProgram = false;
+const testProgram = true;
 const input = testProgram ? testInput : puzzleInput;
 
 let data = input.replace(/\r/g, '').split('\n\n');
@@ -87,5 +87,24 @@ nearbyTickets.forEach(ticket => {
   }
 });
 
-console.log(successfulTicketCount, 'out of', nearbyTickets.length);
-console.log('scanningErrorRate', scanningErrorRate);
+// console.log(successfulTicketCount, 'out of', nearbyTickets.length);
+// console.log('scanningErrorRate', scanningErrorRate);
+// console.log('');
+
+const createFieldObjectSet = () => {
+  let ticketFields = {};
+  let fieldSet = new Set();
+  fieldRules.forEach(rule => {
+    fieldSet.add(rule[0]);
+  });
+
+  for (let index = 0; index < fieldRules.length; index++) {
+    ticketFields[index] = new Set(fieldSet);
+  }
+  return ticketFields;
+};
+
+let ticketFields = createFieldObjectSet();
+
+console.log('fieldRules', fieldRules);
+console.log('ticketFields', ticketFields);
