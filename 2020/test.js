@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-let testInput = `1 + 2 * 3 + 4 * 5 + 6`;
+let testInput = `((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2`;
 
 const puzzleInput = fs.readFileSync(
   path.resolve(__dirname, '18_input.txt'),
@@ -28,9 +28,8 @@ const getBrackLength = section => {
 };
 
 const solveExpression = expression => {
-  let solution = expression[0];
-  for (let i = 1; i < (expression.length - 1) / 2; i++) {
-    console.log('expression', expression.join(' '));
+  ogExpressionLength = expression.length;
+  for (let i = 0; i < (ogExpressionLength - 1) / 2; i++) {
     let valA = Number(expression[0]);
     let operator = expression[1];
     let valB = Number(expression[2]);
@@ -45,11 +44,10 @@ const solveExpression = expression => {
     expression.shift();
     expression.unshift(firstTwoAnswer);
   }
-  return expression;
+  return parseInt(expression[0]);
 };
 
-const solveBrackets = expression => {
-  console.log(expression.join(' '));
+const removeBrackets = expression => {
   let bracketCount = 0;
   expression.forEach(x => {
     if (x === '(') {
@@ -61,12 +59,11 @@ const solveBrackets = expression => {
     let brackIndexA = expression.indexOf('(');
     if (brackIndexA > -1) {
       let brackLength = getBrackLength(expression.slice(brackIndexA));
-      console.log('brackIndexA', brackIndexA, 'brackLength', brackLength);
       let bracketContents = expression.slice(
         brackIndexA + 1,
         brackIndexA + brackLength
       );
-      let brackResult = solveBrackets(bracketContents);
+      let brackResult = removeBrackets(bracketContents);
 
       let newExpression = [];
       newExpression = newExpression.concat(
@@ -74,17 +71,13 @@ const solveBrackets = expression => {
         brackResult,
         expression.slice(brackIndexA + brackLength + 1)
       );
-      console.log(newExpression);
       expression = newExpression;
     }
   }
-
-  return expression;
+  let answer = solveExpression(expression);
+  return answer;
 };
 
-// let test = [1, 2, 3];
-// test.shift();
-// console.log('test', test);
-
-let answer = solveExpression(expression);
-console.log(answer);
+console.log(expression);
+let answer = removeBrackets(expression);
+console.log('answer', answer);

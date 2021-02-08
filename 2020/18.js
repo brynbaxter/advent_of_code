@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-let testInput = `1 + 2 * 3 + 4 * 5 + 6`;
+let testInput = `1 + (2 * 3) + (4 * (5 + 6))`;
 
 const puzzleInput = fs.readFileSync(
   path.resolve(__dirname, '18_input.txt'),
@@ -12,63 +12,73 @@ const testProgram = true;
 const input = testProgram ? testInput : puzzleInput;
 
 let expression = input.replace(/\r| /g, '').split('');
-console.log(expression);
 
-const evalOperator = (valA, operator, valB) => {
-  switch (operator) {
-    case '+':
-      return Number(valA) + Number(valB);
-    case '*':
-      return Number(valA) * Number(valB);
-  }
-};
-
-const getBracketSection = expression => {
-  let stack = [expression[0]];
-  for (let index = 1; index < expression.length; index++) {
-    if (expression[index] === '(') {
+const getBrackLength = section => {
+  let stack = [section[0]];
+  for (let index = 1; index < section.length; index++) {
+    if (section[index] === '(') {
       stack.push('(');
-    } else if (expression[index] === ')') {
+    } else if (section[index] === ')') {
       stack.pop();
-    }
-    if (stack.length === 0) {
-      let bracketExpression = expression.slice(1, index);
-      let remainingExpression = expression.slice(index);
-      return [bracketExpression, remainingExpression];
+      if (stack.length === 0) {
+        return index;
+      }
     }
   }
 };
 
-const evalExpression = expression => {
-  console.log('evalExpression', expression.length, expression);
-  let valA;
-  let operator;
-  let valB;
-
-  if (expression.length === 3) {
-    valA = expression[0];
-    operator = expression[1];
-    valB = expression[2];
-    return evalOperator(valA, operator, valB);
+const solveExpression = expression => {
+  ogExpressionLength = expression.length;
+  for (let i = 0; i < (ogExpressionLength - 1) / 2; i++) {
+    let valA = Number(expression[0]);
+    let operator = expression[1];
+    let valB = Number(expression[2]);
+    let firstTwoAnswer;
+    if (operator === '+') {
+      firstTwoAnswer = valA + valB;
+    } else {
+      firstTwoAnswer = valA * valB;
+    }
+    expression.shift();
+    expression.shift();
+    expression.shift();
+    expression.unshift(firstTwoAnswer);
   }
-
-  if (expression[0] === '(') {
-    let bracketExpression = getBracketSection(expression);
-    valA = evalExpression(bracketExpression);
-  } else {
-    valA = expression[0];
-    operator = expression[1];
-  }
-
-  valA = expression[0];
-  operator = expression[1];
-  valB = expression[2];
-  let calculation = [evalOperator(valA, operator, valB)];
-  let remainingExpression = expression.slice(3);
-  let newExpression = calculation.concat(remainingExpression);
-  let newExpressionResult = evalExpression(newExpression);
-  console.log('newExpressionResult', newExpressionResult);
-  return newExpressionResult;
+  return parseInt(expression[0]);
 };
 
-console.log('FINAL ANSWER', evalExpression(expression));
+const solveBrackets = expression => {
+  console.log(expression.join(' '));
+  let bracketCount = 0;
+  expression.forEach(x => {
+    if (x === '(') {
+      bracketCount++;
+    }
+  });
+
+  for (let i = 0; i < bracketCount; i++) {
+    let brackIndexA = expression.indexOf('(');
+    if (brackIndexA > -1) {
+      let brackLength = getBrackLength(expression.slice(brackIndexA));
+      console.log('brackIndexA', brackIndexA, 'brackLength', brackLength);
+      let bracketContents = expression.slice(
+        brackIndexA + 1,
+        brackIndexA + brackLength
+      );
+      let brackResult = solveBrackets(bracketContents);
+
+      let newExpression = [];
+      newExpression = newExpression.concat(
+        expression.slice(0, brackIndexA),
+        brackResult,
+        expression.slice(brackIndexA + brackLength + 1)
+      );
+      expression = newExpression;
+    }
+  }
+  let answer = solveExpression(expression);
+  return answer;
+};
+
+let answer = solveExpression(expression);
+console.log('answer', answer);
