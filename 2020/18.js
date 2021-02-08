@@ -1,17 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
-let testInput = `1 + (2 * 3) + (4 * (5 + 6))`;
+const getInput = () => {
+  const testInput = `((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2`;
+  const testExpression = [testInput.replace(/\r| /g, '').split('')];
 
-const puzzleInput = fs.readFileSync(
-  path.resolve(__dirname, '18_input.txt'),
-  'utf8'
-);
+  const puzzleInput = fs.readFileSync(
+    path.resolve(__dirname, '18_input.txt'),
+    'utf8'
+  );
+  const puzzleArr = puzzleInput.replace(/\r| /g, '').split('\n');
+  const puzzleNestedArr = puzzleArr.map(x => x.split(''));
 
-const testProgram = true;
-const input = testProgram ? testInput : puzzleInput;
-
-let expression = input.replace(/\r| /g, '').split('');
+  const testProgram = false;
+  const expressionArr = testProgram ? testExpression : puzzleNestedArr;
+  return expressionArr;
+};
 
 const getBrackLength = section => {
   let stack = [section[0]];
@@ -28,8 +32,7 @@ const getBrackLength = section => {
 };
 
 const solveExpression = expression => {
-  ogExpressionLength = expression.length;
-  for (let i = 0; i < (ogExpressionLength - 1) / 2; i++) {
+  while (expression.length > 1) {
     let valA = Number(expression[0]);
     let operator = expression[1];
     let valB = Number(expression[2]);
@@ -44,11 +47,10 @@ const solveExpression = expression => {
     expression.shift();
     expression.unshift(firstTwoAnswer);
   }
-  return parseInt(expression[0]);
+  return parseInt(expression);
 };
 
-const solveBrackets = expression => {
-  console.log(expression.join(' '));
+const removeBrackets = expression => {
   let bracketCount = 0;
   expression.forEach(x => {
     if (x === '(') {
@@ -60,12 +62,11 @@ const solveBrackets = expression => {
     let brackIndexA = expression.indexOf('(');
     if (brackIndexA > -1) {
       let brackLength = getBrackLength(expression.slice(brackIndexA));
-      console.log('brackIndexA', brackIndexA, 'brackLength', brackLength);
       let bracketContents = expression.slice(
         brackIndexA + 1,
         brackIndexA + brackLength
       );
-      let brackResult = solveBrackets(bracketContents);
+      let brackResult = removeBrackets(bracketContents);
 
       let newExpression = [];
       newExpression = newExpression.concat(
@@ -76,9 +77,14 @@ const solveBrackets = expression => {
       expression = newExpression;
     }
   }
-  let answer = solveExpression(expression);
-  return answer;
+  let bracketlessExpression = solveExpression(expression);
+  return bracketlessExpression;
 };
 
-let answer = solveExpression(expression);
-console.log('answer', answer);
+let partOneAnswer = 0;
+const expressionArr = getInput();
+expressionArr.forEach(expression => {
+  let bracketlessExpression = removeBrackets(expression);
+  partOneAnswer += solveExpression(bracketlessExpression);
+});
+console.log('Part 1:', partOneAnswer);

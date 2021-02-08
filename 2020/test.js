@@ -1,17 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 
-let testInput = `((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2`;
+const testInput = `((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2`;
+const testExpression = [testInput.replace(/\r| /g, '').split('')];
 
 const puzzleInput = fs.readFileSync(
   path.resolve(__dirname, '18_input.txt'),
   'utf8'
 );
+const puzzleArr = puzzleInput.replace(/\r| /g, '').split('\n');
+const puzzleNestedArr = puzzleArr.map(x => x.split(''));
 
 const testProgram = true;
-const input = testProgram ? testInput : puzzleInput;
-
-let expression = input.replace(/\r| /g, '').split('');
+const expressionArr = testProgram ? testExpression : puzzleNestedArr;
 
 const getBrackLength = section => {
   let stack = [section[0]];
@@ -28,8 +29,7 @@ const getBrackLength = section => {
 };
 
 const solveExpression = expression => {
-  ogExpressionLength = expression.length;
-  for (let i = 0; i < (ogExpressionLength - 1) / 2; i++) {
+  while (expression.length > 1) {
     let valA = Number(expression[0]);
     let operator = expression[1];
     let valB = Number(expression[2]);
@@ -78,6 +78,8 @@ const removeBrackets = expression => {
   return answer;
 };
 
-console.log(expression);
-let answer = removeBrackets(expression);
+let answer = 0;
+expressionArr.forEach(expression => {
+  answer += removeBrackets(expression);
+});
 console.log('answer', answer);
