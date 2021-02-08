@@ -1,18 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
-const testInput = `((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2`;
-const testExpression = [testInput.replace(/\r| /g, '').split('')];
+const getInput = () => {
+  const testInput = `5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))`;
+  const testExpression = [testInput.replace(/\r| /g, '').split('')];
 
-const puzzleInput = fs.readFileSync(
-  path.resolve(__dirname, '18_input.txt'),
-  'utf8'
-);
-const puzzleArr = puzzleInput.replace(/\r| /g, '').split('\n');
-const puzzleNestedArr = puzzleArr.map(x => x.split(''));
+  const puzzleInput = fs.readFileSync(
+    path.resolve(__dirname, '18_input.txt'),
+    'utf8'
+  );
+  const puzzleArr = puzzleInput.replace(/\r| /g, '').split('\n');
+  const puzzleNestedArr = puzzleArr.map(x => x.split(''));
 
-const testProgram = true;
-const expressionArr = testProgram ? testExpression : puzzleNestedArr;
+  const useTestInput = true;
+  const expressionArr = useTestInput ? testExpression : puzzleNestedArr;
+  return expressionArr;
+};
 
 const getBrackLength = section => {
   let stack = [section[0]];
@@ -44,10 +47,43 @@ const solveExpression = expression => {
     expression.shift();
     expression.unshift(firstTwoAnswer);
   }
-  return parseInt(expression[0]);
+  return parseInt(expression);
 };
 
-const removeBrackets = expression => {
+const solveAddOppFirst = expression => {
+  console.log('Solve Add Operators First:', expression);
+  while (expression.length > 1 && expression.indexOf('+') > -1) {
+    addOppIndex = expression.indexOf('+');
+    let sum =
+      parseInt(expression[addOppIndex - 1]) +
+      parseInt(expression[addOppIndex + 1]);
+    if (addOppIndex === 1) {
+      expression = [sum].concat(expression.slice(3));
+    } else {
+      expression = [].concat(
+        expression.slice(0, addOppIndex - 1),
+        sum,
+        expression.slice(addOppIndex + 2)
+      );
+    }
+  }
+
+  let product = 1;
+  console.log('Add Operators Solved', expression);
+  if (typeof expression !== 'number') {
+    expression.forEach(x => {
+      if (x !== '*') {
+        product *= x;
+      }
+    });
+  } else {
+    product = expression;
+  }
+  console.log('returned product', product);
+  return product;
+};
+
+const removeBrackets = (expression, prioritiseAddOpperator) => {
   let bracketCount = 0;
   expression.forEach(x => {
     if (x === '(') {
@@ -55,31 +91,54 @@ const removeBrackets = expression => {
     }
   });
 
-  for (let i = 0; i < bracketCount; i++) {
-    let brackIndexA = expression.indexOf('(');
-    if (brackIndexA > -1) {
-      let brackLength = getBrackLength(expression.slice(brackIndexA));
-      let bracketContents = expression.slice(
-        brackIndexA + 1,
-        brackIndexA + brackLength
-      );
-      let brackResult = removeBrackets(bracketContents);
+  console.log('with brackets', expression);
 
-      let newExpression = [];
-      newExpression = newExpression.concat(
-        expression.slice(0, brackIndexA),
-        brackResult,
-        expression.slice(brackIndexA + brackLength + 1)
-      );
-      expression = newExpression;
+  let brackIndexA = expression.indexOf('(');
+  if (brackIndexA !== -1) {
+    for (let i = 0; i < bracketCount; i++) {
+      if (brackIndexA > -1) {
+        let brackLength = getBrackLength(expression.slice(brackIndexA));
+        let bracketContents = expression.slice(
+          brackIndexA + 1,
+          brackIndexA + brackLength
+        );
+        let brackResult = removeBrackets(
+          bracketContents,
+          prioritiseAddOpperator
+        );
+
+        newExpression = expression
+          .slice(0, brackIndexA)
+          .concat(brackResult, expression.slice(brackIndexA + brackLength + 1));
+        expression = newExpression;
+      }
     }
   }
-  let answer = solveExpression(expression);
-  return answer;
+
+  console.log('without brackets', expression);
+
+  let bracketlessExpression;
+
+  if (prioritiseAddOpperator) {
+    bracketlessExpression = solveAddOppFirst(expression);
+  } else {
+    bracketlessExpression = solveExpression(expression);
+  }
+  return bracketlessExpression;
 };
 
-let answer = 0;
+// let expressionArr = getInput();
+// let partOneAnswer = 0;
+// expressionArr.forEach(expression => {
+//   let bracketlessExpression = removeBrackets(expression, false);
+//   partOneAnswer += solveExpression(bracketlessExpression);
+// });
+// console.log('Part 1:', partOneAnswer, '\n');
+
+expressionArr = getInput();
+let partTwoAnswer = 0;
 expressionArr.forEach(expression => {
-  answer += removeBrackets(expression);
+  let bracketlessExpression = removeBrackets(expression, true);
+  partTwoAnswer += solveAddOppFirst(bracketlessExpression);
 });
-console.log('answer', answer);
+console.log('\nPart 2:', partTwoAnswer);
