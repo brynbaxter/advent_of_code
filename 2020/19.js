@@ -14,6 +14,7 @@ bababa
 abbbab
 aaabbb
 aaaabbb`;
+
   const inputSplit = input.replace(/\r/g, '').split('\n\n');
   const rules = inputSplit[0].split('\n');
   const messages = inputSplit[1].split('\n');
@@ -25,15 +26,20 @@ const getInput = () => {
     path.resolve(__dirname, '19_input.txt'),
     'utf8'
   );
-  const inputSplit = input.replace(/\r| /g, '').split('\n\n');
+  const inputSplit = input.replace(/\r/g, '').split('\n\n');
   const rules = inputSplit[0].split('\n');
   const messages = inputSplit[1].split('\n');
   return [rules, messages];
 };
 
+const evalRule = rule => {
+  rule = 1;
+};
+
 const useTestInput = true;
-const [rules, messages] = useTestInput ? getTestInput() : getInput();
+let [rules, messages] = useTestInput ? getTestInput() : getInput();
 
 console.log(rules.join('\n'));
 console.log('');
-console.log(messages.join('\n'));
+// console.log(messages.join('\n'));
+// console.log('');
