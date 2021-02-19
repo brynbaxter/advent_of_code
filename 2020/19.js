@@ -104,7 +104,7 @@ const evalRule = (ruleObj, ruleKey) => {
   return ruleStr;
 };
 
-const useTestInput = false;
+const useTestInput = true;
 let [ruleObj, messages] = useTestInput ? getTestInput() : getInput();
 const regexp = '^' + evalRule(ruleObj, '0') + '$';
 
@@ -119,10 +119,12 @@ console.log('Part One:', partOneAnswer);
 
 // ### Part 2 ###
 
-// ruleObj['8'] = '42 | 42 8';
-// ruleObj['11'] = '42 31 | 42 11 31';
-// console.log(ruleObj);
-// // console.log(evalRule(ruleObj, '0'));
+[ruleObj, messages] = useTestInput ? getTestInput() : getInput();
+console.log(ruleObj);
+ruleObj['8'] = '42 | 42 8';
+ruleObj['11'] = '42 31 | 42 11 31';
+console.log(ruleObj);
+// console.log(evalRule(ruleObj, '0'));
 
 // const regexp2 = '^' + evalRule(ruleObj, '0') + '$';
 // console.log(regexp2);
