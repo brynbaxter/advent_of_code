@@ -104,7 +104,7 @@ const evalRule = (ruleObj, ruleKey) => {
   return ruleStr;
 };
 
-const useTestInput = true;
+const useTestInput = false;
 let [ruleObj, messages] = useTestInput ? getTestInput() : getInput();
 const regexp = '^' + evalRule(ruleObj, '0') + '$';
 
@@ -115,25 +115,26 @@ messages.forEach(message => {
     partOneAnswer++;
   }
 });
-console.log('Part One:', partOneAnswer);
+console.log('Part 1:', partOneAnswer);
 
 // ### Part 2 ###
 
+// get data from scratch, as the inital data has been updated by Part 1
 [ruleObj, messages] = useTestInput ? getTestInput() : getInput();
-console.log(ruleObj);
+
 ruleObj['8'] = '42 | 42 8';
 ruleObj['11'] = '42 31 | 42 11 31';
-console.log(ruleObj);
-// console.log(evalRule(ruleObj, '0'));
+// replace above rules with more expressive regex
+ruleObj['8'] = '(42)+';
+ruleObj['11'] = '42 (42 (42 (42 31)? 31)? 31)? 31';
 
-// const regexp2 = '^' + evalRule(ruleObj, '0') + '$';
-// console.log(regexp2);
+const regexp2 = '^' + evalRule(ruleObj, '0') + '$';
 
-// let partTwoAnswer = 0;
-// messages.forEach(message => {
-//   let check = message.search(regexp2);
-//   if (check === 0) {
-//     partTwoAnswer++;
-//   }
-// });
-// console.log('Part 2:', partTwoAnswer);
+let partTwoAnswer = 0;
+messages.forEach(message => {
+  let check = message.search(regexp2);
+  if (check === 0) {
+    partTwoAnswer++;
+  }
+});
+console.log('Part 2:', partTwoAnswer);
