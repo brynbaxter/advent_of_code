@@ -169,6 +169,11 @@ const parseInput = input => {
   return tilesArr;
 };
 
+const useTestInput = true;
+let input = useTestInput ? getTestInput() : getInput();
+const tiles = parseInput(input);
+// console.log(tiles);
+
 const checkSharedEdge = (tileA, tileB) => {
   for (let i = 0; i < tileA.edges.length; i++) {
     if (tileB.edges.indexOf(tileA.edges[i]) > -1) {
@@ -182,17 +187,10 @@ const compareTiles = (tileA, tileB) => {
   // console.log(tileA.id, tileB.id);
   if (checkSharedEdge(tileA, tileB)) {
     // console.log(`${tileA.id} matches ${tileB.id}`);
-    if (!tileA.matches.includes(tileB.id)) {
-      tileA.matches.push(tileB.id);
-      tileB.matches.push(tileA.id);
-    }
+    tileA.matches.push(tileB.id);
+    tileB.matches.push(tileA.id);
   }
 };
-
-const useTestInput = false;
-let input = useTestInput ? getTestInput() : getInput();
-const tiles = parseInput(input);
-// console.log(tiles);
 
 tiles.forEach((tile, index) => {
   for (let i = index; i < tiles.length; i++) {
@@ -203,29 +201,10 @@ tiles.forEach((tile, index) => {
 });
 
 let partOneAnswer = 1;
-let oneMatches = 0;
-let twoMatches = 0;
-let threeMatches = 0;
-let fourMatches = 0;
-let fivesMatches = 0;
 tiles.forEach(tile => {
   console.log(tile.id, tile.matches);
-  if (tile.matches.length === 2) {
-    twoMatches++;
+  if (tile.matches.length <= 2) {
     partOneAnswer *= tile.id;
-  } else if (tile.matches.length === 1) {
-    oneMatches++;
-  } else if (tile.matches.length === 3) {
-    threeMatches++;
-  } else if (tile.matches.length === 4) {
-    fourMatches++;
-  } else if (tile.matches.length === 5) {
-    fivesMatches++;
   }
 });
 console.log('Part 1 Answer:', partOneAnswer);
-console.log('One match', oneMatches);
-console.log('two match', twoMatches);
-console.log('three match', threeMatches);
-console.log('four match', fourMatches);
-console.log('five match', fivesMatches);

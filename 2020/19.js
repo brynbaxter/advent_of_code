@@ -122,13 +122,18 @@ console.log('Part 1:', partOneAnswer);
 // get data from scratch, as the inital data has been updated by Part 1
 [ruleObj, messages] = useTestInput ? getTestInput() : getInput();
 
+// console.log(ruleObj);
 ruleObj['8'] = '42 | 42 8';
 ruleObj['11'] = '42 31 | 42 11 31';
 // replace above rules with more expressive regex
 ruleObj['8'] = '(42)+';
 ruleObj['11'] = '42 (42 (42 (42 31)? 31)? 31)? 31';
 
+// console.log(ruleObj);
+
 const regexp2 = '^' + evalRule(ruleObj, '0') + '$';
+
+// console.log(ruleObj);
 
 let partTwoAnswer = 0;
 messages.forEach(message => {
