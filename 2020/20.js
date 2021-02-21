@@ -169,7 +169,7 @@ const parseInput = input => {
   return tilesArr;
 };
 
-const useTestInput = true;
+const useTestInput = false;
 let input = useTestInput ? getTestInput() : getInput();
 const tiles = parseInput(input);
 // console.log(tiles);
@@ -202,9 +202,15 @@ tiles.forEach((tile, index) => {
 
 let partOneAnswer = 1;
 tiles.forEach(tile => {
-  console.log(tile.id, tile.matches);
+  // console.log(tile.id, tile.matches);
   if (tile.matches.length <= 2) {
     partOneAnswer *= tile.id;
   }
 });
 console.log('Part 1 Answer:', partOneAnswer);
+
+const getCornerTile = (tiles) => {
+
+}
+
+let arrangedTiles = 
