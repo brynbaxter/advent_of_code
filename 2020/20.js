@@ -158,15 +158,15 @@ class Tile {
 }
 
 const parseInput = input => {
-  const tilesArr = [];
+  const tilesObj = new Object();
   input.split('\n\n').forEach(tile => {
     const tileSplit = tile.split(/Tile |:\n/);
     const tileId = parseInt(tileSplit[1]);
     const tileVal = tileSplit[2].split('\n');
     let tileObj = new Tile(tileId, tileVal);
-    tilesArr.push(tileObj);
+    tilesObj[tileId] = tileObj;
   });
-  return tilesArr;
+  return tilesObj;
 };
 
 const useTestInput = false;
@@ -184,7 +184,6 @@ const checkSharedEdge = (tileA, tileB) => {
 };
 
 const compareTiles = (tileA, tileB) => {
-  // console.log(tileA.id, tileB.id);
   if (checkSharedEdge(tileA, tileB)) {
     // console.log(`${tileA.id} matches ${tileB.id}`);
     tileA.matches.push(tileB.id);
@@ -192,25 +191,23 @@ const compareTiles = (tileA, tileB) => {
   }
 };
 
-tiles.forEach((tile, index) => {
-  for (let i = index; i < tiles.length; i++) {
-    if (tile !== tiles[i]) {
-      compareTiles(tile, tiles[i]);
+const tileKeys = Object.keys(tiles);
+// console.log('testA', tiles[3079].id);
+// console.log(tileKeys);
+tileKeys.forEach((tileKeyA, index) => {
+  for (let i = index; i < tileKeys.length; i++) {
+    let tileKeyB = tileKeys[i];
+    if (tileKeyA !== tileKeyB) {
+      compareTiles(tiles[tileKeyA], tiles[tileKeyB]);
     }
   }
 });
 
 let partOneAnswer = 1;
-tiles.forEach(tile => {
+tileKeys.forEach(key => {
   // console.log(tile.id, tile.matches);
-  if (tile.matches.length <= 2) {
-    partOneAnswer *= tile.id;
+  if (tiles[key].matches.length <= 2) {
+    partOneAnswer *= tiles[key].id;
   }
 });
 console.log('Part 1 Answer:', partOneAnswer);
-
-const getCornerTile = (tiles) => {
-
-}
-
-let arrangedTiles = 
