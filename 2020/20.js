@@ -127,6 +127,16 @@ const reverseString = string => {
   return string.split('').reverse().join('');
 };
 
+const rotateMatrix = matrix => {
+  return flipMajorDiagonal(matrix.reverse());
+};
+
+const flipMajorDiagonal = matrix => {
+  return matrix[0].map((column, index) =>
+    matrix.map(row => row[index]).join('')
+  );
+};
+
 class Tile {
   constructor(id, data) {
     this.id = id;
@@ -155,6 +165,34 @@ class Tile {
     this.rightEdgeTile = null;
     this.matches = [];
   }
+
+  rotate = () => {
+    let tileDataMatrix = this.data.map(row => row.split(''));
+    let rotatedMatrix = rotateMatrix(tileDataMatrix);
+
+    this.data = rotatedMatrix;
+    this.topEdge = rotatedMatrix[0];
+    this.bottomEdge = rotatedMatrix[rotatedMatrix.length - 1];
+    this.leftEdge = rotatedMatrix.reduce((accum, currVal) => {
+      return accum + currVal.split('')[0];
+    }, '');
+    this.rightEdge = rotatedMatrix.reduce((accum, currVal) => {
+      return accum + currVal.split('')[currVal.length - 1];
+    }, '');
+  };
+
+  flip = () => {
+    let flippedMatrix = this.data.map(row => reverseString(row));
+    this.data = flippedMatrix;
+    this.topEdge = flippedMatrix[0];
+    this.bottomEdge = flippedMatrix[flippedMatrix.length - 1];
+    this.leftEdge = flippedMatrix.reduce((accum, currVal) => {
+      return accum + currVal.split('')[0];
+    }, '');
+    this.rightEdge = flippedMatrix.reduce((accum, currVal) => {
+      return accum + currVal.split('')[currVal.length - 1];
+    }, '');
+  };
 }
 
 const parseInput = input => {
@@ -168,11 +206,6 @@ const parseInput = input => {
   });
   return tilesObj;
 };
-
-const useTestInput = false;
-let input = useTestInput ? getTestInput() : getInput();
-const tiles = parseInput(input);
-// console.log(tiles);
 
 const checkSharedEdge = (tileA, tileB) => {
   for (let i = 0; i < tileA.edges.length; i++) {
@@ -191,9 +224,11 @@ const compareTiles = (tileA, tileB) => {
   }
 };
 
+const useTestInput = false;
+const input = useTestInput ? getTestInput() : getInput();
+const tiles = parseInput(input);
 const tileKeys = Object.keys(tiles);
-// console.log('testA', tiles[3079].id);
-// console.log(tileKeys);
+
 tileKeys.forEach((tileKeyA, index) => {
   for (let i = index; i < tileKeys.length; i++) {
     let tileKeyB = tileKeys[i];
@@ -205,7 +240,7 @@ tileKeys.forEach((tileKeyA, index) => {
 
 let partOneAnswer = 1;
 tileKeys.forEach(key => {
-  // console.log(tile.id, tile.matches);
+  // console.log(tiles[key].id, tiles[key].matches);
   if (tiles[key].matches.length <= 2) {
     partOneAnswer *= tiles[key].id;
   }
